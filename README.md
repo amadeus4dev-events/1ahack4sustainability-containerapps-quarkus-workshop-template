@@ -1,1 +1,1 @@
-# 1ahack4sustainability-quarkus-template
+# 1ahack4sustainability-template-containerapps-quarkus-workshop
