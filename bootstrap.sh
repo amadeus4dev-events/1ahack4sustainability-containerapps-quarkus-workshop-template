@@ -102,3 +102,35 @@ mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
 
 ### Running all the Tests
 mvn test
+
+
+### Adding .editorconfig file
+echo -e "# EditorConfig helps developers define and maintain consistent
+# coding styles between different editors and IDEs
+# editorconfig.org
+
+root = true
+
+[*]
+
+# We recommend you to keep these unchanged
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Change these settings to your own preference
+indent_style = space
+indent_size = 4
+
+[*.{ts, tsx, js, jsx, json, css, scss, yml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+" >> super-heroes-ui/.editorconfig
+
+cp super-heroes-ui/.editorconfig heroes-app/.editorconfig
+cp super-heroes-ui/.editorconfig villains-app/.editorconfig
+cp super-heroes-ui/.editorconfig fights-app/.editorconfig
+cp super-heroes-ui/.editorconfig statistics-app/.editorconfig
