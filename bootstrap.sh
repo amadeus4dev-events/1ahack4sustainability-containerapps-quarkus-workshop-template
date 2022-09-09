@@ -128,6 +128,7 @@ indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+max_line_length = 1024
 " >> super-heroes-ui/.editorconfig
 
 cp super-heroes-ui/.editorconfig heroes-app/.editorconfig
