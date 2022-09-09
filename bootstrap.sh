@@ -69,7 +69,7 @@ mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
     -DprojectArtifactId=heroes-app \
     -DclassName="io.containerapps.quarkus.workshop.superheroes.hero.HeroResource" \
     -Dpath="/api/heroes" \
-    -Dextensions="resteasy, resteasy-jsonb, hibernate-orm-panache, jdbc-postgresql, smallrye-openapi, smallrye-health"
+    -Dextensions="resteasy, resteasy-jsonb, hibernate-orm-panache, hibernate-validator, jdbc-postgresql, smallrye-openapi, smallrye-health"
 
 
 ### Bootstraps the Villain Microservice
@@ -79,7 +79,7 @@ mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
     -DprojectArtifactId=villains-app \
     -DclassName="io.containerapps.quarkus.workshop.superheroes.villain.VillainResource" \
     -Dpath="/api/heroes" \
-    -Dextensions="resteasy, resteasy-jsonb, hibernate-orm-panache, jdbc-postgresql, smallrye-openapi, smallrye-health"
+    -Dextensions="resteasy, resteasy-jsonb, hibernate-orm-panache, hibernate-validator, jdbc-postgresql, smallrye-openapi, smallrye-health"
 
 
 ### Bootstraps the Fight Microservice
@@ -89,7 +89,7 @@ mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
     -DprojectArtifactId=fights-app \
     -DclassName="io.containerapps.quarkus.workshop.superheroes.fight.FightResource" \
     -Dpath="/api/fights" \
-    -Dextensions="resteasy, resteasy-jsonb, mongodb-panache, smallrye-openapi, smallrye-health, smallrye-fault-tolerance, kafka"
+    -Dextensions="resteasy, resteasy-jsonb, mongodb-panache, hibernate-validator, smallrye-openapi, smallrye-health, smallrye-fault-tolerance, kafka"
 
 
 ### Bootstraps the Statistics Microservice
