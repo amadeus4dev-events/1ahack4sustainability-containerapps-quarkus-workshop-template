@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+
+### ##########################################################################
+### This script is used to bootstrap the environment for the workshop template
+### ##########################################################################
+
+
+### Removes all the generated files from the project
+rm -rf pom.xml \
+  super-heroes-ui \
+  fights-app \
+  heroes-app \
+  statistics-app \
+  villains-app
+
+
+### Creates a Parent POM
+echo -e "<?xml version=\"1.0\"?>
+<project xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\"
+         xmlns=\"http://maven.apache.org/POM/4.0.0\"
+         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.containerapps.quarkus.workshop.superheroes</groupId>
+  <artifactId>parent</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Azure Container Apps and Quarkus Workshop :: Super Heroes</name>
+  
+  <modules>
+    <module>super-heroes-ui</module>
+  </modules>
+
+</project>
+" >> pom.xml
+
+
+### Bootstraps the Super Heroes Angular UI
+ng new super-heroes-ui \
+    --prefix hero \
+    --routing true \
+    --skip-tests true \
+    --minimal true \
+    --inline-style true \
+    --inline-template false \
+    --commit false \
+    --style css \
+    --skip-git true \
+    --skip-install true 
+
+echo -e "<?xml version=\"1.0\"?>
+<project xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd\"
+         xmlns=\"http://maven.apache.org/POM/4.0.0\"
+         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.containerapps.quarkus.workshop.superheroes</groupId>
+  <artifactId>super-heroes-ui</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Azure Container Apps and Quarkus Workshop :: UI</name>
+
+</project>
+" >> super-heroes-ui/pom.xml
+
+
+### Bootstraps the Hero Microservice
+mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
+    -DplatformVersion=2.12.1.Final \
+    -DprojectGroupId=io.containerapps.quarkus.workshop.superheroes \
+    -DprojectArtifactId=heroes-app \
+    -DclassName="io.containerapps.quarkus.workshop.superheroes.hero.HeroResource" \
+    -Dpath="/api/heroes" \
+    -Dextensions="resteasy, resteasy-jsonb, hibernate-orm-panache, jdbc-postgresql, smallrye-openapi, smallrye-health"
+
+
+### Bootstraps the Villain Microservice
+mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
+    -DplatformVersion=2.12.1.Final \
+    -DprojectGroupId=io.containerapps.quarkus.workshop.superheroes \
+    -DprojectArtifactId=villains-app \
+    -DclassName="io.containerapps.quarkus.workshop.superheroes.villain.VillainResource" \
+    -Dpath="/api/heroes" \
+    -Dextensions="resteasy, resteasy-jsonb, hibernate-orm-panache, jdbc-postgresql, smallrye-openapi, smallrye-health"
+
+
+### Bootstraps the Fight Microservice
+mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
+    -DplatformVersion=2.12.1.Final \
+    -DprojectGroupId=io.containerapps.quarkus.workshop.superheroes \
+    -DprojectArtifactId=fights-app \
+    -DclassName="io.containerapps.quarkus.workshop.superheroes.fight.FightResource" \
+    -Dpath="/api/fights" \
+    -Dextensions="resteasy, resteasy-jsonb, mongodb-panache, smallrye-openapi, smallrye-health, smallrye-fault-tolerance, kafka"
+
+
+### Bootstraps the Statistics Microservice
+mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
+    -DplatformVersion=2.12.1.Final \
+    -DprojectGroupId=io.containerapps.quarkus.workshop.superheroes \
+    -DprojectArtifactId=statistics-app \
+    -Dextensions="resteasy-jsonb, websockets, smallrye-health"
+
+
+### Running all the Tests
+mvn test
