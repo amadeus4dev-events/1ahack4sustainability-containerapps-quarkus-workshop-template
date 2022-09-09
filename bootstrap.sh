@@ -89,7 +89,7 @@ mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
     -DprojectArtifactId=fights-app \
     -DclassName="io.containerapps.quarkus.workshop.superheroes.fight.FightResource" \
     -Dpath="/api/fights" \
-    -Dextensions="resteasy, resteasy-jsonb, mongodb-panache, hibernate-validator, smallrye-openapi, smallrye-health, smallrye-fault-tolerance, kafka"
+    -Dextensions="resteasy, resteasy-jsonb, mongodb-panache, hibernate-validator, smallrye-openapi, smallrye-health, smallrye-fault-tolerance, rest-client, kafka"
 
 
 ### Bootstraps the Statistics Microservice

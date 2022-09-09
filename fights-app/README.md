@@ -53,6 +53,7 @@ If you want to learn more about building native executables, please consult http
 - SmallRye Health ([guide](https://quarkus.io/guides/microprofile-health)): Monitor service health
 - Hibernate Validator ([guide](https://quarkus.io/guides/validation)): Validate object properties (field, getter) and method parameters for your beans (REST, CDI, JPA)
 - SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
+- REST Client Classic ([guide](https://quarkus.io/guides/rest-client)): Call REST services
 - SmallRye Reactive Messaging - Kafka Connector ([guide](https://quarkus.io/guides/kafka-reactive-getting-started)): Connect to Kafka with Reactive Messaging
 - MongoDB with Panache ([guide](https://quarkus.io/guides/mongodb-panache)): Simplify your persistence code for MongoDB via the active record or the repository pattern
 - RESTEasy Classic JSON-B ([guide](https://quarkus.io/guides/rest-json)): JSON-B serialization support for RESTEasy Classic
@@ -66,6 +67,12 @@ Use SmallRye Reactive Messaging
 
 [Related Apache Kafka guide section...](https://quarkus.io/guides/kafka-reactive-getting-started)
 
+
+### REST Client
+
+Invoke different services through REST with JSON
+
+[Related guide section...](https://quarkus.io/guides/rest-client)
 
 ### RESTEasy JAX-RS
 
