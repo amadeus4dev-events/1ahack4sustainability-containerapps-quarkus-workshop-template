@@ -21,7 +21,6 @@ services:
         INSTALL_GRADLE: "false"
         GRADLE_VERSION: ""
         NODE_VERSION: "16"
-    environment:
 
     volumes:
       - ..:/workspace:cached
