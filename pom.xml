@@ -12,6 +12,5 @@
     <module>heroes-app</module>
     <module>villains-app</module>
     <module>fights-app</module>
-    <module>statistics-app</module>
   </modules>
 </project>

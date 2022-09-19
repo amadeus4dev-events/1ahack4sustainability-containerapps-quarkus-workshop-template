@@ -10,7 +10,6 @@ rm -rf pom.xml \
   super-heroes-ui \
   fights-app \
   heroes-app \
-  statistics-app \
   villains-app
 
 
@@ -63,8 +62,8 @@ echo -e "<?xml version=\"1.0\"?>
 
 
 ### Bootstraps the Hero Microservice
-mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
-    -DplatformVersion=2.12.1.Final \
+mvn io.quarkus:quarkus-maven-plugin:2.12.2.Final:create \
+    -DplatformVersion=2.12.2.Final \
     -DprojectGroupId=io.containerapps.quarkus.workshop.superheroes \
     -DprojectArtifactId=heroes-app \
     -DclassName="io.containerapps.quarkus.workshop.superheroes.hero.HeroResource" \
@@ -73,8 +72,8 @@ mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
 
 
 ### Bootstraps the Villain Microservice
-mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
-    -DplatformVersion=2.12.1.Final \
+mvn io.quarkus:quarkus-maven-plugin:2.12.2.Final:create \
+    -DplatformVersion=2.12.2.Final \
     -DprojectGroupId=io.containerapps.quarkus.workshop.superheroes \
     -DprojectArtifactId=villains-app \
     -DclassName="io.containerapps.quarkus.workshop.superheroes.villain.VillainResource" \
@@ -83,21 +82,13 @@ mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
 
 
 ### Bootstraps the Fight Microservice
-mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
-    -DplatformVersion=2.12.1.Final \
+mvn io.quarkus:quarkus-maven-plugin:2.12.2.Final:create \
+    -DplatformVersion=2.12.2.Final \
     -DprojectGroupId=io.containerapps.quarkus.workshop.superheroes \
     -DprojectArtifactId=fights-app \
     -DclassName="io.containerapps.quarkus.workshop.superheroes.fight.FightResource" \
     -Dpath="/api/fights" \
     -Dextensions="resteasy, resteasy-jsonb, mongodb-panache, hibernate-validator, smallrye-openapi, smallrye-health, smallrye-fault-tolerance, rest-client, kafka"
-
-
-### Bootstraps the Statistics Microservice
-mvn io.quarkus:quarkus-maven-plugin:2.12.1.Final:create \
-    -DplatformVersion=2.12.1.Final \
-    -DprojectGroupId=io.containerapps.quarkus.workshop.superheroes \
-    -DprojectArtifactId=statistics-app \
-    -Dextensions="resteasy-jsonb, websockets, smallrye-health"
 
 
 ### Running all the Tests
@@ -134,4 +125,3 @@ max_line_length = 1024
 cp super-heroes-ui/.editorconfig heroes-app/.editorconfig
 cp super-heroes-ui/.editorconfig villains-app/.editorconfig
 cp super-heroes-ui/.editorconfig fights-app/.editorconfig
-cp super-heroes-ui/.editorconfig statistics-app/.editorconfig
