@@ -6,7 +6,7 @@ SCRIPTS_FOLDER="scripts"
 
 source variables.sh
 
-bash "${SCRIPTS_FOLDER}/010 - authenticate.sh" -S "${SUBSCRIPTION_NAME}"
+bash "${SCRIPTS_FOLDER}/000 - authenticate.sh" -S "${SUBSCRIPTION_NAME}"
 
 az group delete \
   --name "$RESOURCE_GROUP"
