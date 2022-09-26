@@ -15,7 +15,7 @@ public class HeroResourceTest {
           .when().get("/api/heroes")
           .then()
              .statusCode(200)
-             .body(is("Hello RESTEasy"));
+             .body(is("Hello from the Heroes App !\n"));
     }
 
 }

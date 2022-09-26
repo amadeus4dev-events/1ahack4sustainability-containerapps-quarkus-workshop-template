@@ -15,7 +15,7 @@ public class VillainResourceTest {
           .when().get("/api/villains")
           .then()
              .statusCode(200)
-             .body(is("Hello RESTEasy"));
+             .body(is("Hello from the Villains App !\n"));
     }
 
 }
