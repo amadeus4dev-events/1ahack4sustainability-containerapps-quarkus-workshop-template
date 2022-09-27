@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 public class HeroResource {
 
     @GET
+    @Path("/hello")
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
         return "Hello from the Heroes App !\n";

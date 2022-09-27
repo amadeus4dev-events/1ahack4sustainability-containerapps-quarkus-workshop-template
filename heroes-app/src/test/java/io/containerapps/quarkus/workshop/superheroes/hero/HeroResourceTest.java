@@ -12,7 +12,7 @@ public class HeroResourceTest {
     @Test
     public void testHelloEndpoint() {
         given()
-          .when().get("/api/heroes")
+          .when().get("/api/heroes/hello")
           .then()
              .statusCode(200)
              .body(is("Hello from the Heroes App !\n"));
