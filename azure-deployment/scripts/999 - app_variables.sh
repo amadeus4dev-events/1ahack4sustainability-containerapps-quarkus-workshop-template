@@ -1,5 +1,5 @@
 function check_env_variables(){
-  [ ! "${UNIQUE_IDENTIFIER}" ] && UNIQUE_IDENTIFIER=$(whoami) && export UNIQUE_IDENTIFIER
+  [ ! "${UNIQUE_IDENTIFIER}" ] && echo "ERROR: Please set env variable UNIQUE_IDENTIFIER" && exit 1
 
   [ ! "${REGISTRY_URL}" ] && echo "ERROR: Please set env variable REGISTRY_URL" && exit 1
   [ ! "${IMAGES_TAG}" ] && echo "ERROR: Please set env variable IMAGES_TAG" && exit 1

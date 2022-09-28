@@ -3,7 +3,6 @@
 set -e
 
 function check_env_variables(){
-
   [ ! "${POSTGRES_DB_ADMIN}" ] && echo "ERROR: Please set env variable POSTGRES_DB_ADMIN" && exit 1
   [ ! "${POSTGRES_DB_PWD}" ] && echo "ERROR: Please set env variable POSTGRES_DB_PWD" && exit 1
 

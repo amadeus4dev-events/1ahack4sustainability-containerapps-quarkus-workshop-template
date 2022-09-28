@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
 set -e
 
 function check_env_variables(){
@@ -21,7 +19,6 @@ function check_env_variables(){
 }
 
 SCRIPTS_FOLDER="scripts"
-APP_FOLDER="${SCRIPT_DIR}/.."
 
 source variables.sh
 check_env_variables
@@ -33,13 +30,4 @@ bash "${SCRIPTS_FOLDER}/010 - configure_cli.sh"
 bash "${SCRIPTS_FOLDER}/020 - configure_subscription.sh"
 
 bash "${SCRIPTS_FOLDER}/030 - deploy_infra_resources.sh" -r "${RESOURCE_GROUP}" -l "${LOCATION}" -T "${TAG}" -L "${LOG_ANALYTICS_WORKSPACE}" -R "${REGISTRY}" -I "${IMAGES_TAG}" -V "${SCRIPTS_FOLDER}/999 - app_variables.sh"
-
-bash "${SCRIPTS_FOLDER}/040 - prepare_application.sh" -D "${APP_FOLDER}"
-
-bash "${SCRIPTS_FOLDER}/050 - build_containers.sh"  -D "${APP_FOLDER}" -V "${SCRIPTS_FOLDER}/999 - app_variables.sh"
-
-# Population scripts to do not exits
-bash "${SCRIPTS_FOLDER}/060 - populate_db.sh"  -D "${APP_FOLDER}" -V "${SCRIPTS_FOLDER}/999 - app_variables.sh"
-
-bash "${SCRIPTS_FOLDER}/070 - deploy_app.sh" -V "${SCRIPTS_FOLDER}/999 - app_variables.sh"
 
