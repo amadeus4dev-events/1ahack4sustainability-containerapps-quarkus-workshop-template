@@ -5,6 +5,10 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 set -e
 
 function check_env_variables(){
+  [ ! "${ARM_TENANT_ID}" ] && echo "ERROR: Please set env variable ARM_TENANT_ID" && exit 1
+  [ ! "${ARM_CLIENT_ID}" ] && echo "ERROR: Please set env variable ARM_CLIENT_ID" && exit 1
+  [ ! "${ARM_CLIENT_SECRET}" ] && echo "ERROR: Please set env variable ARM_CLIENT_SECRET" && exit 1
+
   [ ! "${SUBSCRIPTION_NAME}" ] && echo "ERROR: Please set env variable SUBSCRIPTION_NAME" && exit 1
   [ ! "${RESOURCE_GROUP}" ] && echo "ERROR: Please set env variable RESOURCE_GROUP" && exit 1
   [ ! "${LOCATION}" ] && echo "ERROR: Please set env variable LOCATION" && exit 1
@@ -22,7 +26,7 @@ APP_FOLDER="${SCRIPT_DIR}/.."
 source variables.sh
 check_env_variables
 
-bash "${SCRIPTS_FOLDER}/000 - authenticate.sh" -S "${SUBSCRIPTION_NAME}"
+bash "${SCRIPTS_FOLDER}/000 - authenticate.sh" -t "${ARM_TENANT_ID}" -c "${ARM_CLIENT_ID}" -p "${ARM_CLIENT_SECRET}" -S "${SUBSCRIPTION_NAME}"
 
 bash "${SCRIPTS_FOLDER}/010 - configure_cli.sh"
 
