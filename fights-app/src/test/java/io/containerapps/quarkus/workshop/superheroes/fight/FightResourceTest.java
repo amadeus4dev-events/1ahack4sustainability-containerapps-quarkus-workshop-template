@@ -15,7 +15,7 @@ public class FightResourceTest {
           .when().get("/api/fights")
           .then()
              .statusCode(200)
-             .body(is("Hello RESTEasy"));
+             .body(is("Hello from the Fight App !\n"));
     }
 
 }

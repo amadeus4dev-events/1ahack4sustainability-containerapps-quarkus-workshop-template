@@ -12,10 +12,10 @@ public class VillainResourceTest {
     @Test
     public void testHelloEndpoint() {
         given()
-          .when().get("/api/heroes")
+          .when().get("/api/villains/hello")
           .then()
              .statusCode(200)
-             .body(is("Hello RESTEasy"));
+             .body(is("Hello from the Villains App !\n"));
     }
 
 }
