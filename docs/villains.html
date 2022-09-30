@@ -550,6 +550,13 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <li><a href="#villain-entity">Villain entity</a></li>
 </ul>
 </li>
+<li><a href="#to-go-further">To go further</a>
+<ul class="sectlevel2">
+<li><a href="#retrieve-a-villain-using-its-id">Retrieve a Villain using its ID</a></li>
+<li><a href="#delete-a-villain-using-its-id">Delete a Villain using its ID</a></li>
+<li><a href="#create-a-villain-in-the-database">Create a Villain in the Database</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -787,10 +794,148 @@ mvn quarkus:dev</code></pre>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="to-go-further"><a class="anchor" href="#to-go-further"></a><a class="link" href="#to-go-further">To go further</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here are a few ideas to enrich the microservice with new functionalities.</p>
+</div>
+<div class="sect2">
+<h3 id="retrieve-a-villain-using-its-id"><a class="anchor" href="#retrieve-a-villain-using-its-id"></a><a class="link" href="#retrieve-a-villain-using-its-id">Retrieve a Villain using its ID</a></h3>
+<div class="paragraph">
+<p>Who&#8217;s the 500th Villain in the database ?
+Wouldn&#8217;t it be nice to be able to call <code>curl localhost:8701/api/villains/500</code> and have the answer?</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Implement a new method in <code>VillainResource</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@GET</span>
+<span class="annotation">@Path</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/{id}</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> Response getVillainById(<span class="annotation">@PathParam</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>) <span class="type">long</span> id) {}</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You may want to use the <code>Villain.findById()</code> method.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="delete-a-villain-using-its-id"><a class="anchor" href="#delete-a-villain-using-its-id"></a><a class="link" href="#delete-a-villain-using-its-id">Delete a Villain using its ID</a></h3>
+<div class="paragraph">
+<p>Now, supposing you did not like our 500th Villain, how would you go about removing him from the database?</p>
+</div>
+<div class="paragraph">
+<p>We would like to implement a DELETE operation on our Villain resource, so that a call to <code>curl -X DELETE localhost:8701/api/villains/500</code> would delete the Villain from the database.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>@DELETE</code>, <code>@Transactional</code> and <code>Villain.deleteById()</code> might come in handy.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you have implemented the previous exercise, your implementation is easy to test: just try retrieving the Villain after deleting him.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-a-villain-in-the-database"><a class="anchor" href="#create-a-villain-in-the-database"></a><a class="link" href="#create-a-villain-in-the-database">Create a Villain in the Database</a></h3>
+<div class="paragraph">
+<p>Finally, you may want to add you favorite Villain to the database. Make him/her level 1000 since you&#8217;re at it.</p>
+</div>
+<div class="paragraph">
+<p><code>curl -X POST localhost:8701/api/villains --header 'Content-Type: application/json' --data-raw '{"level":1000,"name":"My Favorite Villain","powers":"Cool Powers"}'</code></p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You will need a new endpoint with <code>@POST</code>, <code>@Transactional</code>, and <code>@Consumes(MediaType.APPLICATION_JSON)</code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The Villain entity you receive can be persisted with one single line of code.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Make your new endpoint return the persisted Villain entity, so that you get his/her ID.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-09-29 14:23:51 +0200
+Last updated 2022-09-30 11:08:12 +0200
 </div>
 </div>
 </body>
