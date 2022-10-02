@@ -1,0 +1,39 @@
+name: "☁️ - Provision Azure Resources"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token : write
+  contents: read
+
+jobs:
+  azure-provisionning:
+    runs-on: ubuntu-latest
+    env:
+      ARM_TENANT_ID : ${{ secrets.AZURE_TENANT_ID }}
+      ARM_CLIENT_ID : ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET : ${{ secrets.AZURE_CLIENT_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      #####################################################################################
+      #
+      # Teams must edit the ./azure-deployment/.env file with the proper values      
+      #
+      - name: Load Environment Variable
+        uses: xom9ikk/dotenv@v1.0.2
+        with:
+          path: ./azure-deployment/      
+
+      #####################################################################################
+      #
+      # Usually in GitHub Actions we try to reduce the use of Scripts as much as possible
+      # for this workshop we are reusing scripts that can be used from the development machine
+      # to provision the infrastructure
+      #
+      - name: "Infrastructure provisionning"
+        run: |
+          bash "./azure-deployment/deploy_infrastructure.sh"
+
