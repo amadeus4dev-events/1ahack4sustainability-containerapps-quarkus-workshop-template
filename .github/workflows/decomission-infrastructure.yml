@@ -23,7 +23,6 @@ jobs:
       #
       # Teams must edit the ./azure-deployment/.env file with the proper values      
       #
-      #####################################################################################
       - name: Load Environment Variable
         uses: xom9ikk/dotenv@v1.0.2
         with:
@@ -34,9 +33,7 @@ jobs:
       # Usually in GitHub Actions we try to reduce the use of Scripts as much as possible
       # for this workshop we are reusing scripts that can be used from the development machine
       # to provision the infrastructure
-      #      - name: "Delete Resources"
-      #####################################################################################
-        - name: "Delete Infrastucture (Resource Group)"
+      - name: "Delete Infrastucture (Resource Group)"
         run: |
           bash "./azure-deployment/delete_all.sh"
 
