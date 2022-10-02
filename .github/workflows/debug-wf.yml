@@ -1,0 +1,27 @@
+name: "🐛   - Debug and Print"
+
+on:
+  workflow_dispatch:
+
+env:
+  ARM_TENANT_ID : ${{ secrets.AZURE_TENANT_ID }}
+  ARM_CLIENT_ID : ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET : ${{ secrets.AZURE_CLIENT_SECRET }}
+
+jobs:
+
+  debug-container-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Load Environment Variable
+        uses: xom9ikk/dotenv@v1.0.2
+        with:
+          path: ./azure-deployment/
+
+      - name: Azure Login from CLI
+        run : |
+          bash "./azure-deployment/scripts/000 - authenticate.sh" -t "${ARM_TENANT_ID}" -c "${ARM_CLIENT_ID}" -p "${ARM_CLIENT_SECRET}" -S "${SUBSCRIPTION_NAME}"
+          echo "## Published Containers" >> $GITHUB_STEP_SUMMARY
+          az acr repository list --name "$REGISTRY" --output yaml  >> $GITHUB_STEP_SUMMARY        

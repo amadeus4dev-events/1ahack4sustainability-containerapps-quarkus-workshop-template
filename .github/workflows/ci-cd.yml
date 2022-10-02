@@ -1,0 +1,299 @@
+name: "☕  - Deploy Application"
+
+on:
+  workflow_dispatch:
+
+
+env:
+  ARM_TENANT_ID : ${{ secrets.AZURE_TENANT_ID }}
+  ARM_CLIENT_ID : ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET : ${{ secrets.AZURE_CLIENT_SECRET }}
+
+
+jobs:
+  init:
+    name: "👋 - Initialize"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Load Environment Variable
+        uses: xom9ikk/dotenv@v1.0.2
+        with:
+          path: ./azure-deployment/
+
+
+
+
+  ###########################################################################
+  #   Build Heroes App:
+  #     - Set all environmment variables for this application
+  #     - Install GraalVM
+  #     - Build the native app with maven
+  #     - Build and Publish the container with docker cli
+  ###########################################################################
+  build-push-heroes-container: 
+    name: "🦸  - Build and Deploy Heroes Application"
+    runs-on: ubuntu-latest
+    needs: init
+
+    steps:
+      - uses: actions/checkout@v3
+          
+      - name: Load Environment Variable
+        uses: xom9ikk/dotenv@v1.0.2
+        with:
+          path: ./azure-deployment/
+
+
+      - name: Azure Login from CLI
+        run : |
+          bash "./azure-deployment/scripts/000 - authenticate.sh" -t "${ARM_TENANT_ID}" -c "${ARM_CLIENT_ID}" -p "${ARM_CLIENT_SECRET}" -S "${SUBSCRIPTION_NAME}"
+          bash "./azure-deployment/scripts/010 - configure_cli.sh"
+
+      - name: set-env-for-app
+        run: |
+          echo "HEROES_APP=heroes-app" >> $GITHUB_ENV
+          echo "HEROES_DB_SCHEMA=heroes" >> $GITHUB_ENV
+          echo "HEROES_DB=heroes-db-${{env.UNIQUE_IDENTIFIER}}" >> $GITHUB_ENV
+          echo "REGISTRY_URL=$(az acr show --resource-group '${{env.RESOURCE_GROUP}}' --name '${{env.REGISTRY}}' --query loginServer --output tsv)" >> $GITHUB_ENV
+
+
+      - name: set-env-for-db-and-registry
+        run: |
+          echo "HEROES_IMAGE=${{env.REGISTRY_URL}}/${{env.HEROES_APP}}:${{env.IMAGES_TAG}}" >> $GITHUB_ENV
+          echo "HEROES_DB_CONNECT_STRING=postgresql://${{env.HEROES_DB}}.postgres.database.azure.com:5432/${{env.HEROES_DB_SCHEMA}}?ssl=true&sslmode=require" >> $GITHUB_ENV
+
+          
+      - name: "☕ - Setup GraalVM"
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "☕ - Build Java Native application"
+        run: |
+          cd heroes-app
+          ./mvnw package -Pnative
+
+      - name: "🐳  - build-heroes-container"
+        run: |
+          az acr login --name "$REGISTRY"
+          cd heroes-app
+          docker build -f src/main/docker/Dockerfile.native -t quarkus/rest-heroes .
+          docker tag quarkus/rest-heroes:latest "$HEROES_IMAGE"
+          docker push "$HEROES_IMAGE"
+
+      - name: "☁️ - Create Azure Container App"
+        run: |
+          az containerapp create \
+            --resource-group "$RESOURCE_GROUP" \
+            --tags system="$TAG" application="$HEROES_APP" \
+            --image "$HEROES_IMAGE" \
+            --name "$HEROES_APP" \
+            --environment "$CONTAINERAPPS_ENVIRONMENT" \
+            --ingress external \
+            --target-port 8702 \
+            --min-replicas 0 \
+            --env-vars QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=validate \
+                      QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT=no-file \
+                      QUARKUS_DATASOURCE_USERNAME="$POSTGRES_DB_ADMIN" \
+                      QUARKUS_DATASOURCE_PASSWORD="$POSTGRES_DB_PWD" \
+                      QUARKUS_DATASOURCE_REACTIVE_URL="$HEROES_DB_CONNECT_STRING"
+
+      - name: "🚀  - Application Deployed"
+        run: |
+          echo "###🚀 Application HEROES_APP deployed " >> $GITHUB_STEP_SUMMARY
+          echo "- Container App: HEROES_APP" >> $GITHUB_STEP_SUMMARY
+          echo "- Container Image: $HEROES_IMAGE" >> $GITHUB_STEP_SUMMARY
+  
+  ###########################################################################
+  #   Build fights App:
+  #     - Set all environmment variables for this application
+  #     - Install GraalVM
+  #     - Build the native app with maven
+  #     - Build and Publish the container with docker cli
+  ###########################################################################
+  build-push-fights-container:
+    name: "🥊 - Build and Deploy Fights Application"
+    runs-on: ubuntu-latest
+    needs: init
+
+    steps:
+      - uses: actions/checkout@v3
+          
+      - name: Load Environment Variable
+        uses: xom9ikk/dotenv@v1.0.2
+        with:
+          path: ./azure-deployment/
+
+
+      - name: Azure Login from CLI
+        run : |
+          bash "./azure-deployment/scripts/000 - authenticate.sh" -t "${ARM_TENANT_ID}" -c "${ARM_CLIENT_ID}" -p "${ARM_CLIENT_SECRET}" -S "${SUBSCRIPTION_NAME}"
+          bash "./azure-deployment/scripts/010 - configure_cli.sh"
+
+      - name: set-env-for-app
+        run: |
+          echo "FIGHTS_APP=fights-app" >> $GITHUB_ENV
+          echo "FIGHTS_DB_SCHEMA=fights" >> $GITHUB_ENV
+          echo "FIGHTS_DB=fights-db-${{env.UNIQUE_IDENTIFIER}}" >> $GITHUB_ENV
+          echo "REGISTRY_URL=$(az acr show --resource-group '${{env.RESOURCE_GROUP}}' --name '${{env.REGISTRY}}' --query loginServer --output tsv)" >> $GITHUB_ENV
+
+
+      - name: set-env-for-db-and-registry
+        run: |
+          echo "FIGHTS_IMAGE=${{env.REGISTRY_URL}}/${{env.FIGHTS_APP}}:${{env.IMAGES_TAG}}" >> $GITHUB_ENV
+          echo "FIGHTS_DB_CONNECT_STRING=postgresql://${{env.FIGHTS_DB}}.postgres.database.azure.com:5432/${{env.FIGHTS_DB_SCHEMA}}?ssl=true&sslmode=require" >> $GITHUB_ENV
+    
+
+      - name: "☕ - Setup GraalVM"
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "☕ - Build Java Native application"
+        run: |
+          cd fights-app
+          ./mvnw package -Pnative
+
+      - name: "🐳  - build-fights-container"
+        run: |
+          az acr login --name "$REGISTRY"
+          cd fights-app
+          docker build -f src/main/docker/Dockerfile.native -t quarkus/rest-fights .
+          docker tag quarkus/rest-fights:latest "$FIGHTS_IMAGE"
+          docker push "$FIGHTS_IMAGE"
+
+      - name: "☁️ - Create Azure Container App"
+        run: |
+          az containerapp create \
+            --resource-group "$RESOURCE_GROUP" \
+            --tags system="$TAG" application="$FIGHTS_APP" \
+            --image "$FIGHTS_IMAGE" \
+            --name "$FIGHTS_APP" \
+            --environment "$CONTAINERAPPS_ENVIRONMENT" \
+            --ingress external \
+            --target-port 8703 \
+            --min-replicas 0 \
+            --env-vars QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=validate \
+                      QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT=no-file \
+                      QUARKUS_DATASOURCE_USERNAME="$POSTGRES_DB_ADMIN" \
+                      QUARKUS_DATASOURCE_PASSWORD="$POSTGRES_DB_PWD" \
+                      QUARKUS_DATASOURCE_REACTIVE_URL="$FIGHTS_DB_CONNECT_STRING"
+
+      - name: "🚀  - Application Deployed"
+        run: |
+          echo "###🚀 Application FIGHTS_APP deployed " >> $GITHUB_STEP_SUMMARY
+          echo "- Container App: FIGHTS_APP" >> $GITHUB_STEP_SUMMARY
+          echo "- Container Image: $FIGHTS_IMAGE" >> $GITHUB_STEP_SUMMARY                  
+
+  ###########################################################################
+  #   Build villains App:
+  #     - Set all environmment variables for this application
+  #     - Install GraalVM
+  #     - Build the native app with maven
+  ###########################################################################
+  build-push-villains-container:
+    name: "🦹   - Build and Deploy Villains Application"
+    runs-on: ubuntu-latest
+    needs: init
+
+    steps:
+      - uses: actions/checkout@v3
+          
+      - name: Load Environment Variable
+        uses: xom9ikk/dotenv@v1.0.2
+        with:
+          path: ./azure-deployment/
+
+
+      - name: Azure Login from CLI
+        run : |
+          bash "./azure-deployment/scripts/000 - authenticate.sh" -t "${ARM_TENANT_ID}" -c "${ARM_CLIENT_ID}" -p "${ARM_CLIENT_SECRET}" -S "${SUBSCRIPTION_NAME}"
+          bash "./azure-deployment/scripts/010 - configure_cli.sh"
+
+      - name: set-env-for-app
+        run: |
+          echo "VILLAINS_APP=villains-app" >> $GITHUB_ENV
+          echo "VILLAINS_DB_SCHEMA=villains" >> $GITHUB_ENV
+          echo "VILLAINS_DB=villains-db-${{env.UNIQUE_IDENTIFIER}}" >> $GITHUB_ENV
+          echo "REGISTRY_URL=$(az acr show --resource-group '${{env.RESOURCE_GROUP}}' --name '${{env.REGISTRY}}' --query loginServer --output tsv)" >> $GITHUB_ENV
+
+
+      - name: set-env-for-db-and-registry
+        run: |
+          echo "VILLAINS_IMAGE=${{env.REGISTRY_URL}}/${{env.VILLAINS_APP}}:${{env.IMAGES_TAG}}" >> $GITHUB_ENV
+          echo "VILLAINS_DB_CONNECT_STRING=postgresql://${{env.VILLAINS_DB}}.postgres.database.azure.com:5432/${{env.VILLAINS_DB_SCHEMA}}?ssl=true&sslmode=require" >> $GITHUB_ENV
+
+
+      - name: "☕ - Setup GraalVM"
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: 'latest'
+          java-version: '17'
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "☕ - Build Java Native application"
+        run: |
+          cd villains-app
+          ./mvnw package -Pnative
+
+      - name: "🐳  - build-villains-container"
+        run: |
+          az acr login --name "$REGISTRY"
+          cd villains-app
+          docker build -f src/main/docker/Dockerfile.native -t quarkus/rest-villains .
+          docker tag quarkus/rest-villains:latest "$VILLAINS_IMAGE"
+          docker push "$VILLAINS_IMAGE"
+
+      - name: "☁️ - Create Azure Container App"
+        run: |
+          az containerapp create \
+            --resource-group "$RESOURCE_GROUP" \
+            --tags system="$TAG" application="$VILLAINS_APP" \
+            --image "$VILLAINS_IMAGE" \
+            --name "$VILLAINS_APP" \
+            --environment "$CONTAINERAPPS_ENVIRONMENT" \
+            --ingress external \
+            --target-port 8701 \
+            --min-replicas 0 \
+            --env-vars QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION=validate \
+                      QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT=no-file \
+                      QUARKUS_DATASOURCE_USERNAME="$POSTGRES_DB_ADMIN" \
+                      QUARKUS_DATASOURCE_PASSWORD="$POSTGRES_DB_PWD" \
+                      QUARKUS_DATASOURCE_REACTIVE_URL="$VILLAINS_DB_CONNECT_STRING"
+
+      - name: "🚀  - Application Deployed"
+        run: |
+          echo "###🚀 Application VILLAINS_APP deployed " >> $GITHUB_STEP_SUMMARY
+          echo "- Container App: VILLAINS_APP" >> $GITHUB_STEP_SUMMARY
+          echo "- Container Image: $VILLAINS_IMAGE" >> $GITHUB_STEP_SUMMARY       
+
+  finish:
+    name: "🏁 - Finish"
+    runs-on: ubuntu-latest
+    needs: [
+      build-push-heroes-container,
+      build-push-villains-container,
+      build-push-fights-container]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Load Environment Variable
+        uses: xom9ikk/dotenv@v1.0.2
+        with:
+          path: ./azure-deployment/
+
+      - name: Azure Login from CLI
+        run : |
+          bash "./azure-deployment/scripts/000 - authenticate.sh" -t "${ARM_TENANT_ID}" -c "${ARM_CLIENT_ID}" -p "${ARM_CLIENT_SECRET}" -S "${SUBSCRIPTION_NAME}"
+          echo "## Published Containers" >> $GITHUB_STEP_SUMMARY
+          az acr repository list --name "$REGISTRY" --output yaml  >> $GITHUB_STEP_SUMMARY                  

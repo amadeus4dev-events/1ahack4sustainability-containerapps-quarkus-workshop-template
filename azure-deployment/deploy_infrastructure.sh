@@ -18,10 +18,10 @@ function check_env_variables(){
   return 0
 }
 
-SCRIPTS_FOLDER="scripts"
+SCRIPTS_FOLDER="./azure-deployment/scripts"
 
-source variables.sh
-check_env_variables
+# NOTES: Remove the variable script as we are using the Workflow to set the data
+# source variables.shcheck_env_variables
 
 bash "${SCRIPTS_FOLDER}/000 - authenticate.sh" -t "${ARM_TENANT_ID}" -c "${ARM_CLIENT_ID}" -p "${ARM_CLIENT_SECRET}" -S "${SUBSCRIPTION_NAME}"
 
