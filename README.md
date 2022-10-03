@@ -12,6 +12,7 @@ You will use modern development tools such as [GitHub Codespaces](https://github
 Then, you will be pushing Docker containers, creating managed services on Azure (databases, Kafka) and monitoring the entire system on Azure Container Apps.
 
 ## Workshop Instructions
+[1AHACKFORSTUSTINABILITY Quarkus workshop](https://amadeus4dev-events.github.io/1ahack4sustainability-containerapps-quarkus-workshop-template/spine.html)
 
 ## References
 
